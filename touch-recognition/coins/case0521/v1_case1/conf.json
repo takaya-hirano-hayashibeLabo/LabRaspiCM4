@@ -1,0 +1,11 @@
+{
+   "target_dir": "/mnt/ssd1/hiranotakaya/master/dev/workspace/prj_202405_2MR/real_device/convert_tf2snn/coin/case0521/v1/case1",
+   "execution_time": "2024-05-21T15:24:40.317582",
+   "filters": [
+      "canny"
+   ],
+   "resize": [
+      96,
+      72
+   ]
+}
