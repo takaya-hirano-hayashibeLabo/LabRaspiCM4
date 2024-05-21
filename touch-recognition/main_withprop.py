@@ -79,6 +79,8 @@ def main():
                     filtered_frame = apply_roberts_filter(np.expand_dims(filtered_frame, axis=0))
                 if filter=="canny":
                     filtered_frame = apply_canny_edge_detector(np.expand_dims(filtered_frame, axis=0))
+                if filter=="sobel":
+                    filtered_frame=apply_sobel_edge_detector(np.expand_dims(filtered_frame, axis=0))
 
             is_color=filtered_frame.shape[-1]>1
             if is_color:
@@ -86,8 +88,7 @@ def main():
             elif not is_color:
                 input_data = np.expand_dims(cv2.resize(filtered_frame[0], (72, 96)), axis=0)
                 input_data=np.expand_dims(input_data,axis=-1).astype(np.uint8)
-            # out = softmax(np.squeeze(model.forward(input_data))/255)
-            out = softmax(np.arange(7))
+            out = softmax(np.squeeze(model.forward(input_data))/255)
             predict = np.argmax(out, axis=-1)
 
             # フィルタをかけた後のデータをframeの横に描画
