@@ -56,36 +56,66 @@ def apply_canny_edge_detector_(batch_images):
 
 def apply_canny_edge_detector(batch_images):
     """
-    メジアン処理→2値化処理→Cannyエッジ抽出の順で画像処理を行う
+    各チャンネルごとにエッジ検出を行う
     :param batch_images: [batch x h x w x c]
     :return: エッジが抽出された画像
     """
     batch_size, h, w, c = batch_images.shape
-    edge_images = np.zeros((batch_size, h, w, 1), dtype=np.uint8)
+    edge_images = np.zeros((batch_size, h, w, c), dtype=np.uint8)
     
     for i in range(batch_size):
-        # 画像をグレースケールに変換
-        filtered_img = cv2.cvtColor(batch_images[i], cv2.COLOR_RGB2GRAY)
-        
-        # メジアンフィルタを適用
-        filtered_img = cv2.medianBlur(filtered_img, 5)
-        # コントラストを上げる
-        filtered_img = cv2.equalizeHist(filtered_img)   
-        
-        # エッジ鮮鋭化のためにシャープニングフィルタを適用
-        kernel = np.array([[0, -1, 0], 
-                           [-1, 5,-1], 
-                           [0, -1, 0]])
-        filtered_img = cv2.filter2D(filtered_img, -1, kernel)        
 
+        filtered_imgs=np.zeros_like(batch_images[i])
+        for rgb_idx in range(3):
+            
+            filtered_img=batch_images[i,:,:,rgb_idx]
+            
+            # # ノイズを減らすためにガウシアンフィルタを適用
+            filtered_img = cv2.GaussianBlur(filtered_img, (15,15), 2)
 
-        # Cannyエッジ検出を適用
-        # filtered_img = cv2.Canny(filtered_img, 100, 200)
+            # # Cannyエッジ検出を適用
+            filtered_img = cv2.Canny(filtered_img, 15, 20)
         
-        # 結果を保存 (channel次元を1として残す)
-        edge_images[i, :, :, 0] = filtered_img
+            filtered_imgs[:,:,rgb_idx]=filtered_img
+
+        # 結果を保存
+        edge_images[i] = filtered_imgs
                 
     return edge_images
+
+
+def apply_sobel_edge_detector(batch_images):
+    """
+    各チャンネルごとにエッジ検出を行う
+    :param batch_images: [batch x h x w x c]
+    :return: エッジが抽出された画像
+    """
+    batch_size, h, w, c = batch_images.shape
+    edge_images = np.zeros((batch_size, h, w, c), dtype=np.uint8)
+    
+    for i in range(batch_size):
+
+        filtered_imgs=np.zeros_like(batch_images[i])
+        for rgb_idx in range(3):
+            
+            filtered_img=batch_images[i,:,:,rgb_idx]
+            
+            # # ノイズを減らすためにガウシアンフィルタを適用
+            filtered_img = cv2.GaussianBlur(filtered_img, (7,7), 2)
+
+            # Sobelフィルタによるエッジ抽出を適用
+            grad_x = cv2.Sobel(filtered_img, cv2.CV_64F, 1, 0, ksize=3)
+            grad_y = cv2.Sobel(filtered_img, cv2.CV_64F, 0, 1, ksize=3)
+            filtered_img = cv2.magnitude(grad_x, grad_y)
+            filtered_img = cv2.normalize(filtered_img, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+
+            filtered_imgs[:,:,rgb_idx]=filtered_img
+
+        # 結果を保存
+        edge_images[i] = filtered_imgs
+                
+    return edge_images
+
 
 
 # def apply_canny_edge_detector_(batch_images):

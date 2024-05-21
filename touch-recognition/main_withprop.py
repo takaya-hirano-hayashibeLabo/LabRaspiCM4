@@ -86,15 +86,21 @@ def main():
             elif not is_color:
                 input_data = np.expand_dims(cv2.resize(filtered_frame[0], (72, 96)), axis=0)
                 input_data=np.expand_dims(input_data,axis=-1).astype(np.uint8)
-            out = softmax(np.squeeze(model.forward(input_data))/255)
+            # out = softmax(np.squeeze(model.forward(input_data))/255)
+            out = softmax(np.arange(7))
             predict = np.argmax(out, axis=-1)
 
             # フィルタをかけた後のデータをframeの横に描画
             filtered_view=filtered_frame[0]
             if not is_color:
                 filtered_view=cv2.cvtColor(filtered_frame[0], cv2.COLOR_GRAY2RGB)
-            combined_frame = np.hstack((frame, filtered_view))
-
+            
+            # チャンネルごとに分割してグレースケールで描画
+            channels = cv2.split(filtered_view)
+            grayscale_channels = [cv2.cvtColor(ch, cv2.COLOR_GRAY2RGB) for ch in channels]
+            combined_channels = np.hstack(grayscale_channels)
+            
+            combined_frame = np.hstack((frame, combined_channels))
             # 予測結果をフレームに描画
             cv2.putText(combined_frame, f'Prediction: {predict}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 
