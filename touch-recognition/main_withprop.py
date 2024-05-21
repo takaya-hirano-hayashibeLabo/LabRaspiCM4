@@ -70,45 +70,46 @@ def main():
     fps=digit_conf["QVGA"]["fps"]["30fps"]
     digit.set_fps(fps)
 
-    while True:
-        frame = digit.get_frame()
-        filtered_frame = np.copy(frame)
-        for filter in conf["filters"]:
-            if filter == "roberts":
-                filtered_frame = apply_roberts_filter(np.expand_dims(filtered_frame, axis=0))
-            if filter=="canny":
-                filtered_frame = apply_canny_edge_detector(np.expand_dims(filtered_frame, axis=0))
+    try:
+        while True:
+            frame = digit.get_frame()
+            filtered_frame = np.copy(frame)
+            for filter in conf["filters"]:
+                if filter == "roberts":
+                    filtered_frame = apply_roberts_filter(np.expand_dims(filtered_frame, axis=0))
+                if filter=="canny":
+                    filtered_frame = apply_canny_edge_detector(np.expand_dims(filtered_frame, axis=0))
 
-        is_color=filtered_frame.shape[-1]>1
-        if is_color:
-            input_data = np.expand_dims(cv2.resize(filtered_frame[0], (72, 96)), axis=0).astype(np.uint8)
-        elif not is_color:
-            input_data = np.expand_dims(cv2.resize(filtered_frame[0], (72, 96)), axis=0)
-            input_data=np.expand_dims(input_data,axis=-1).astype(np.uint8)
-        out = softmax(np.squeeze(model.forward(input_data))/255)
-        predict = np.argmax(out, axis=-1)
+            is_color=filtered_frame.shape[-1]>1
+            if is_color:
+                input_data = np.expand_dims(cv2.resize(filtered_frame[0], (72, 96)), axis=0).astype(np.uint8)
+            elif not is_color:
+                input_data = np.expand_dims(cv2.resize(filtered_frame[0], (72, 96)), axis=0)
+                input_data=np.expand_dims(input_data,axis=-1).astype(np.uint8)
+            out = softmax(np.squeeze(model.forward(input_data))/255)
+            predict = np.argmax(out, axis=-1)
 
-        # フィルタをかけた後のデータをframeの横に描画
-        filtered_view=filtered_frame[0]
-        if not is_color:
-            filtered_view=cv2.cvtColor(filtered_frame[0], cv2.COLOR_GRAY2RGB)
-        combined_frame = np.hstack((frame, filtered_view))
+            # フィルタをかけた後のデータをframeの横に描画
+            filtered_view=filtered_frame[0]
+            if not is_color:
+                filtered_view=cv2.cvtColor(filtered_frame[0], cv2.COLOR_GRAY2RGB)
+            combined_frame = np.hstack((frame, filtered_view))
 
-        # 予測結果をフレームに描画
-        cv2.putText(combined_frame, f'Prediction: {predict}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
+            # 予測結果をフレームに描画
+            cv2.putText(combined_frame, f'Prediction: {predict}', (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2, cv2.LINE_AA)
 
-        # ヒストグラムを描画してフレームの横に追加
-        combined_frame = draw_histogram(out, combined_frame)
-        cv2.imshow('Frame', combined_frame) # フレームを表示
+            # ヒストグラムを描画してフレームの横に追加
+            combined_frame = draw_histogram(out, combined_frame)
+            cv2.imshow('Frame', combined_frame) # フレームを表示
 
-        if cv2.waitKey(10) & 0xFF == ord('q'): # qキーが押されたかチェック
-            print("Exiting loop...")
-            break
-        
-        time.sleep(1.0 / fps)
-
-    digit.disconnect()
-    cv2.destroyAllWindows() # 追加
+            if cv2.waitKey(10) & 0xFF == ord('q'): # qキーが押されたかチェック
+                print("Exiting loop...")
+                break
+            
+            time.sleep(1.0 / fps)
+    finally:
+        digit.disconnect()
+        cv2.destroyAllWindows() # 追加
 
 if __name__ == "__main__":
     main()
