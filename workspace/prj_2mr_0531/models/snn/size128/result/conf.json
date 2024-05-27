@@ -1,0 +1,12 @@
+{
+   "target_dir": "/mnt/ssd1/hiranotakaya/master/dev/workspace/prj_202405_2MR/real_device/convert_tf2snn/coin/case0527/size128",
+   "is_tuning": true,
+   "execution_time": "2024-05-27T13:29:53.228674",
+   "filters": [
+      "sobel"
+   ],
+   "resize": [
+      128,
+      128
+   ]
+}

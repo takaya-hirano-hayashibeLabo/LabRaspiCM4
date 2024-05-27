@@ -1,0 +1,12 @@
+{
+   "target_dir": "/mnt/ssd1/hiranotakaya/master/dev/workspace/prj_202405_2MR/real_device/convert_tf2snn/coin/case0522/sobel_v1",
+   "is_tuning": false,
+   "execution_time": "2024-05-22T10:28:56.389396",
+   "filters": [
+      "sobel"
+   ],
+   "resize": [
+      72,
+      72
+   ]
+}

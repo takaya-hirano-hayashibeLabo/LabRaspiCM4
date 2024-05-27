@@ -1,0 +1,12 @@
+{
+   "target_dir": "/mnt/ssd1/hiranotakaya/master/dev/workspace/prj_202405_2MR/real_device/train_tf/coin/case0527/size32",
+   "device": 0,
+   "execution_time": "2024-05-27T12:26:08.384257",
+   "filters": [
+      "sobel"
+   ],
+   "resize": [
+      32,
+      32
+   ]
+}

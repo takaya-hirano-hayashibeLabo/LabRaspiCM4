@@ -1,0 +1,18 @@
+train:
+  batch: 512
+  save_interval: 10
+  epochs: 50
+  lr: 0.0003
+  datapath: /mnt/ssd1/hiranotakaya/master/dev/workspace/prj_202405_2MR/real_device/prepare_tfdata/coin0527/sobel_size128
+
+model:
+  in_size: [128,128] #[height x width]
+  in_channel: 3
+  conv_hiddens: [4,8,16,32]
+  conv_dropouts: [0.15,0.15,0.15,0.15]
+  kernels: [3,3,3,3]
+  paddings: [1,1,1,1]
+  strides: [1,1,1,1]
+  dropout: 0.5 #全結合層前のdropout
+  linear_hiddens: [512] #flattenした後のhiddens
+  out_size: 7
