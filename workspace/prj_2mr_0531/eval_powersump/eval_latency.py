@@ -35,7 +35,7 @@ def inference_process(device, img_size, savepath):
     test_in = np.repeat(test_in, N, axis=0)
     test_label = np.repeat(test_label, N, axis=0)
 
-    batchsize = 512
+    batchsize = 1
     num_batches = len(test_in) // batchsize
 
     start_time = time.time()
@@ -55,11 +55,8 @@ def inference_process(device, img_size, savepath):
         acc+=acc_batch
         datasize += len(batch_inputs)
 
-        timestamp=time.time()
-        result=model.statistics.powers
-        # result["timestamp"]=timestamp
+        result={}
         result["latency"] = inference_end - inference_start  # Add latency to result
-        result["accuracy"] = acc_batch / len(batch_inputs)
         result_list.append(result)
 
     acc = acc / datasize
@@ -71,7 +68,7 @@ def inference_process(device, img_size, savepath):
     # Save result_list to CSV
     import csv
     keys = result_list[0].keys()
-    with open(savepath / 'result_list.csv', 'w', newline='') as output_file:
+    with open(savepath / 'latency.csv', 'w', newline='') as output_file:
         dict_writer = csv.DictWriter(output_file, fieldnames=keys)
         dict_writer.writeheader()
         dict_writer.writerows(result_list)
@@ -87,7 +84,7 @@ def inference_process(device, img_size, savepath):
     combined_result.update({f"{key}_stddev": stddev_result[key] for key in stddev_result})
 
     # Save the combined_result to a JSON file
-    with open(savepath / 'average_result.json', 'w') as json_file:
+    with open(savepath / 'latency_stat.json', 'w') as json_file:
         json.dump(combined_result, json_file, indent=4)
 
 
@@ -95,8 +92,6 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--img_size", default=16, type=int)
     parser.add_argument("--savepath", default="result")
-    parser.add_argument("--interval", type=int, default=0.1, help="Monitoring interval (seconds)")
-    parser.add_argument("--duration", type=int, default=60, help="Monitoring duration (seconds)")
     args = parser.parse_args()
 
     savepath = Path(__file__).parent / args.savepath

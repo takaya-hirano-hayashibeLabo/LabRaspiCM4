@@ -1,0 +1,14 @@
+{
+    "Avg_mean": 872.54,
+    "Min_mean": 871.6,
+    "Max_mean": 873.4,
+    "Std_mean": 1.0273793998675427,
+    "latency_mean": 0.3810127735137939,
+    "accuracy_mean": 0.421484375,
+    "Avg_stddev": 1.5120846537148556,
+    "Min_stddev": 0.8,
+    "Max_stddev": 2.8000000000000003,
+    "Std_stddev": 1.5656175252578377,
+    "latency_stddev": 0.005898877867952247,
+    "accuracy_stddev": 0.010364452469860624
+}
