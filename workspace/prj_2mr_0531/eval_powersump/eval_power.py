@@ -31,7 +31,7 @@ def inference_process(device, img_size, savepath):
     test_in = np.load(test_root / f"size{img_size}/test_data.npy")
     test_label = np.load(test_root / f"size{img_size}/test_labels.npy")
 
-    N = 1
+    N = 5
     test_in = np.repeat(test_in, N, axis=0)
     test_label = np.repeat(test_label, N, axis=0)
 
@@ -46,19 +46,15 @@ def inference_process(device, img_size, savepath):
         batch_inputs = test_in[i * batchsize:(i + 1) * batchsize]
         batch_labels = test_label[i * batchsize:(i + 1) * batchsize].astype(np.int8)
         
-        inference_start = time.time()  # Start time of inference
         out = np.squeeze(model.forward(batch_inputs.astype(np.uint8)))
-        inference_end = time.time()  # End time of inference
 
         predict = np.argmax(out, axis=-1)
         acc_batch = np.sum(predict == batch_labels)
         acc+=acc_batch
         datasize += len(batch_inputs)
 
-        timestamp=time.time()
         result=model.statistics.powers
         # result["timestamp"]=timestamp
-        result["latency"] = inference_end - inference_start  # Add latency to result
         result["accuracy"] = acc_batch / len(batch_inputs)
         result_list.append(result)
 
