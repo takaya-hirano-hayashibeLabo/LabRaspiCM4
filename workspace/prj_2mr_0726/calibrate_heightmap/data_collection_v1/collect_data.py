@@ -10,16 +10,24 @@ import json
 import time
 import cv2  
 
-def collect_data(digit_sensor:Digit, fps):
+def collect_data(digit_sensor: Digit, fps):
     frames = []
+    collect = False
 
     while True:
         frame = digit_sensor.get_frame()
-        frames.append(frame)
         cv2.imshow("frame", frame)
         
-        if cv2.waitKey(1) & 0xFF == ord('q'):
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('q'):
             break
+        elif key == ord('s'):
+            collect = True
+            print("Data collection started.")
+        
+        if collect:
+            frames.append(frame)
+            print(f"Collected {len(frames)} frames.")
         
         time.sleep(1.0 / fps)
     
@@ -47,7 +55,6 @@ def main():
     fps = digit_conf["QVGA"]["fps"]["30fps"]
     d.set_fps(fps)
 
-    print("\ncollecting digit data...")
     print("***put 'q' key to quit data collection***")
     frames = collect_data(d, fps)
 

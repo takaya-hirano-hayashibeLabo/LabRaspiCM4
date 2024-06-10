@@ -1,0 +1,16 @@
+{
+    "target": "0606/ver3/",
+    "device": 6,
+    "execution_time": "2024-06-06T15:30:15.998315",
+    "train_data_conf": {
+       "raw_datapath": "/mnt/ssd1/hiranotakaya/master/dev/workspace/prj_202407_2MR/calibrate_heightmap_v2/0606/raw_data",
+       "output_path": "0606/ver3",
+       "nograd_rate": 0.6,
+       "sample_num": "5",
+       "is_view3d": false,
+       "px_size": [
+          240,
+          240
+       ]
+    }
+ }
